@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzq.dao.ArticleDao">
+
+    <!--映射结果集 关联集合-->
+    <resultMap id="articleAndusersResultMap" type="com.mzq.pojo.Article">
+        <!--javaBean属性名和数据库列名映射-->
+        <id property="articleId" column="articleId"></id>
+        <result property="articleTitle" column="articleTitle"></result>
+        <!--关联对象-->
+        <association property="articleAuthor" javaType="com.mzq.pojo.UserInfo">
+            <id property="userId" column="userid"></id>
+            <result property="userName" column="username"></result>
+        </association>
+    </resultMap>
+
+    <select id="listArticlesInfo" resultMap="articleAndusersResultMap">
+       select articleId,articleTitle,userid,username
+       from article join userinfo on userinfo.userid = article.articleAuthor
+    </select>
+
+</mapper>

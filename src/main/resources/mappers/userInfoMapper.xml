@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为UserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.mzq.dao.UserInfoDao">
+    <!-- 映射结果集-->
+    <resultMap id="userInfoResultMap" type="com.mzq.pojo.UserInfo">
+        <!--javabean属性名和数据库列名做映射-->
+        <id property="userId" column="userid" javaType="int" jdbcType="BIGINT"/>
+        <result property="userName" column="username" javaType="String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <resultMap id="userInfoAndArticle" type="com.mzq.pojo.UserInfo">
+        <!--javabean属性名和数据库列名做映射-->
+        <id property="userId" column="userid" javaType="int" jdbcType="BIGINT"/>
+        <result property="userName" column="username" javaType="String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="String" jdbcType="VARCHAR"/>
+        <!--关联集合  ofType存放结果集-->
+        <collection property="articleList" ofType="com.mzq.pojo.Article">
+            <id  property="articleId" column="articleId" ></id>
+            <result property="articleTitle" column="articleTitle"></result>
+            <result property="articleAuthor" column="articleAuthor"></result>
+        </collection>
+    </resultMap>
+
+    <select id="listUserInfos" resultMap="userInfoResultMap">
+        SELECT userid, username, password
+        FROM userinfo
+    </select>
+
+    <delete id="deleteUserInfoByUserId" parameterType="int">
+        DELETE FROM userinfo where userid = #{userId}
+    </delete>
+
+    <select id="getUserInfo" resultMap="userInfoResultMap">
+        select userid, username, password from userinfo where username = #{userName}
+        and password = #{password}
+    </select>
+
+    <update id="updateUserInfo" parameterType="com.mzq.pojo.UserInfo">
+        UPDATE userinfo
+        SET username = #{userName}, password = #{password}
+        WHERE userid = #{userId}
+    </update>
+
+    <insert id="insert" parameterType="com.mzq.pojo.UserInfo">
+        INSERT INTO userinfo
+        (username,password)
+        VALUES (
+        #{userName,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="getUserInfoAndArticle" resultMap="userInfoAndArticle">
+       select userid,username,password,articleId,articleTitle,articleAuthor
+       from userinfo left join article on userinfo.userid = article.articleAuthor
+       where userinfo.userid = #{userId}
+   </select>
+
+
+
+</mapper>
